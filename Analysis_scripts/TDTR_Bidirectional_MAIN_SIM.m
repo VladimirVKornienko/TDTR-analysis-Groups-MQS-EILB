@@ -8,8 +8,8 @@ clear all
 %-------------------------------BEGIN CODE---------------------------------
 
 %% USER INPUT
-    [SysParam] = Parameter_Data_Example();%Parameter_Example(); %load parameters (matlab function, parameters are assigned in next section below)
-     load_Data = 0; if load_Data, load('struct_test_data.mat'), tnorm = 200; end   %load data (.mat), choose time value for normalization of Vin (ps)
+    [SysParam] = Parameter_Test_Tomi();%Parameter_Example(); %load parameters (matlab function, parameters are assigned in next section below)
+     load_Data = 1; if load_Data, load('struct_test_data.mat'), tnorm = 200; end   %load data (.mat), choose time value for normalization of Vin (ps)
   save_results = 0; if save_results, savefile = 'AN160219c_TDTR_Bidirectional_SENS'; end   % filename for saving parameters and results
            SIM = 1;  % do simulation
           SENS = 1;  % compute sensitivities                        
@@ -35,7 +35,7 @@ AbsProf = SysParam.AbsProf;  % COLUMN vector describing absorption profile throu
 
 f = SysParam.f;  % Laser modulation frequence(Hz)
 r_pump = SysParam.r_pump;  % Pump 1/e^2 radius (m)
-r_probe = SysParam.r_pump;   % Probe 1/e^2 radius (m)
+r_probe = SysParam.r_probe;   % Probe 1/e^2 radius (m)  % CORRECTED FROM ".r_pump", July 2023. %
 tau_rep = SysParam.tau_rep;  % Laser repetition period (s)
 P_pump = SysParam.P_pump;  % absorbed pump power (transmission of objective X absorbance X pump power) 
 P_probe = SysParam.P_probe;  % absorbed pump power (transmission of objective X absorbance X pump power); assumes AF chopper is OFF!  If not, then you need to multiply the probe power by 2.

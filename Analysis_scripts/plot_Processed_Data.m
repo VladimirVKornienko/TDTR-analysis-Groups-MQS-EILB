@@ -3,7 +3,7 @@
 
 %TDTR_matrix_to_struct
 clear;
-filename = ['Al_Si@9_prep.mat'];
+filename = ['Quartz_N4_June2_prep_SHIFTED.mat'];
 data = load(filename);
 
 Data = data.Data;
@@ -23,31 +23,31 @@ ylabel('Ratio')
 xlabel('t_{delay} (ps)')
 
 
-% figure;
-% plot(Data.tdelay,Data.Ratio,'linewidth',2)
-% ylabel('Ratio (-V_{in}/V_{out})')
-% xlabel('t_{delay} (ps)')
-% 
-% hold on;
-% 
-% filename = ['Si_N3_June2_prep_SHIFTED.mat'];
-% data = load(filename);
-% 
-% Data = data.Data;
-% 
-% plot(Data.tdelay,Data.Ratio,'linewidth',2)
-% ylabel('Ratio (-V_{in}/V_{out})')
-% xlabel('t_{delay} (ps)')
-% 
-% hold on;
-% 
-% filename = ['Si_SiO2_N2_June2_prep_SHIFTED.mat'];
-% data = load(filename);
-% 
-% Data = data.Data;
-% 
-% plot(Data.tdelay,Data.Ratio,'linewidth',2)
-% ylabel('Ratio (-V_{in}/V_{out})')
-% xlabel('t_{delay} (ps)')
-% 
-% legend ('SiO2', 'Si', 'Si+1um SiO2','box','off')
+figure;
+plot(Data.tdelay,Data.Ratio,'linewidth',2)
+ylabel('Ratio (-V_{in}/V_{out})')
+xlabel('t_{delay} (ps)')
+
+hold on;
+
+filename = ['Si_N3_June2_prep_SHIFTED.mat'];
+data = load(filename);
+
+Data = data.Data;
+
+plot(Data.tdelay,Data.Ratio,'linewidth',2)
+ylabel('Ratio (-V_{in}/V_{out})')
+xlabel('t_{delay} (ps)')
+
+hold on;
+
+filename = ['Si_SiO2_N2_June2_prep_SHIFTED.mat'];
+data = load(filename);
+
+Data = data.Data;
+
+plot(Data.tdelay,Data.Ratio,'linewidth',2)
+ylabel('Ratio (-V_{in}/V_{out})')
+xlabel('t_{delay} (ps)')
+
+legend ('SiO2', 'Si', 'Si+1um SiO2','box','off')

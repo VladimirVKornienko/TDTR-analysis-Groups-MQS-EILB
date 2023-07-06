@@ -65,7 +65,8 @@ function [delphase,phase,fitparam] = AutoSetPhase(t0,filename,t_window)
    fig2 = 102;
 
    if ishandle(fig1), close 101; end
-   if ishandle(fig2), close 103; end
+   % if ishandle(fig2), close 103; end
+   if ishandle(fig2), close 102; end
    
 % Check input parameters
    % The first input parameter is necessary

@@ -4,6 +4,9 @@
 % This function can handle varying pump size over delay time thanks to Greg Hohensee.
 
 % Input paameters:
+
+% ADDED: figNum - for "figure(figNum)".
+
 %   X           - New values of the fit parameters
 %   ratio_data  - TDTR ratio data measured
 %   tdelay      - time delay (ps)
@@ -24,7 +27,7 @@
 
 %---------------------------- BEGIN CODE ----------------------------------
 
-function [Z,Ratio_model] = TDTR_Bidirectional_SUB_C(X,Ratio_data,tdelay,tau_rep,f,Lambda,C,h,eta,r_pump,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
+function [Z,Ratio_model] = TDTR_Bidirectional_SUB_C(figNum, X,Ratio_data,tdelay,tau_rep,f,Lambda,C,h,eta,r_pump,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
 
 % assign fit variable X to material parameters 
     for i = 1:length(FITNLambda)
@@ -47,7 +50,7 @@ res = ((Ratio_model-Ratio_data)./Ratio_model).^2;
 Z = sqrt(sum(res))/length(res)
 X
 
-figure(10)
+figure(figNum)
 clf
 semilogx(tdelay, -real(Ts)./imag(Ts),'g')
 hold on

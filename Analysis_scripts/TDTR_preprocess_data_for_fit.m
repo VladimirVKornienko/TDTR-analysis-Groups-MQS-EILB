@@ -1,14 +1,12 @@
 %TDTR_matrix_to_struct
 clear;
-filename = ['Al_Si@9.1MHz_10x_10-5mW_pd215mV_1.mat'];
+filename = ['Quartz_N4_June2.mat'];
 %filename = 'f07_SampleN4_phase0_250322_230743.mat';
 %filename = 'f06_SampleN3_phase0_250322_224312.mat';
 %filename = 'struct_test_data2_SHIFTED.mat'
 %filename = '25_f05_SampleN2_phase0_250322_220940.mat';
 %filename = 'sio2_test_SHIFTED.mat';
 data = load(filename);
-
-data = data.Data;
 
 if isstruct(data)
     structData = struct();
@@ -27,12 +25,12 @@ elseif ismatrix(data)
     Data.Vin = data(:,3);
     Data.Vout = data(:,4);
     Data.Ratio = data(:,5);
-    Data.Vdet = data(:,6);
+    Data.Vdet = ones(length(data.Data(:,5)),1);
 end
 
 %automatically shift the tdelay zero to peak position
-%[approx_zero,az_idx] = max(abs(diff(Data.Vin)));
-%Data.tdelay = (Data.stagePosition - Data.stagePosition(az_idx)).*(2*12.5e-6*1e12)./3e8; %in ps
+[approx_zero,az_idx] = max(abs(diff(Data.Vin)));
+Data.tdelay = (Data.stagePosition - Data.stagePosition(az_idx)).*(2*12.5e-6*1e12)./3e8; %in ps
 
 figure;
 subplot(3,1,1)

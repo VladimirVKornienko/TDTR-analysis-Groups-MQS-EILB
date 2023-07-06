@@ -8,11 +8,14 @@ clear all
 %-------------------------------BEGIN CODE---------------------------------
 
 %% USER INPUT
-    [SysParam] = Parameter_Hohensee_Al_Si(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
+   flagUseMovMean = false;   % true or false: apply the moving average transform of the size
+    movMeanWindow = 5;      % << (that size) to the RATIO data.
+
+    [SysParam] = SiO2_temp(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
       datafile = SysParam.filename; %'Data_Example.mat';  % load data (.mat)
          tnorm = 200;  % choose time value for normalization of Vin (ps)
-       auto_on = 1;  % 1 for automatic fitting, 0 for manual fitting
-  save_results = 0; if save_results, addfilename = ''; end  % saves results using datafile string as filename; you can add further information to the filename using the addfilename string
+       auto_on = 0;  % 1 for automatic fitting, 0 for manual fitting
+  save_results = 1; if save_results, addfilename = ''; end  % saves results using datafile string as filename; you can add further information to the filename using the addfilename string
            Col = 'k';   % Change color of curve in results plots
       ClearFig = 1;  % Clear results figure
            psc = 0; if psc, frac = 0.19; tmax = 3.6e-9; end %frac: fractional change in pump spot size over delay time; tmax: maximum time delay
@@ -35,7 +38,7 @@ AbsProf = SysParam.AbsProf;  % COLUMN vector describing absorption profile throu
 
 f = SysParam.f;  % Laser modulation frequence(Hz)
 r_pump = SysParam.r_pump;  % Pump 1/e^2 radius (m)
-r_probe = SysParam.r_pump;   % Probe 1/e^2 radius (m)
+r_probe = SysParam.r_probe;   % Probe 1/e^2 radius (m)  % CORRECTED FROM ".r_pump", July 2023. %
 tau_rep = SysParam.tau_rep;  % Laser repetition period (s)
 P_pump = SysParam.P_pump;  % absorbed pump power (transmission of objective X absorbance X pump power) 
 P_probe = SysParam.P_probe;  % absorbed pump power (transmission of objective X absorbance X pump power); assumes AF chopper is OFF!  If not, then you need to multiply the probe power by 2.
@@ -55,6 +58,7 @@ else
     r_pump_model = r_pump;
 end
 
+
 %% IMPORT DATA
 load(datafile);
 tdelay_raw = Data.tdelay*1e-12; % delay time (s)
@@ -72,7 +76,15 @@ else
     r_pump_data = r_pump;
 end
 
+%% Moving average for <RATIO> data, if needed:
+if (flagUseMovMean)
+    Ratio_data = movmean(Ratio_data,movMeanWindow);
+end
+
 %% DO FITTING
+
+currFigN = 10;  % handle for the figure; can be incremented or kept constant -- see below.
+
 % define initial value(s) for fit
 X0 = zeros(length(FITNLambda)+length(FITNC)+length(FITNh),1);
 for i = 1:length(FITNLambda)
@@ -87,24 +99,66 @@ end
 
 % automatic fitting    
 if auto_on == 1      
-    Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
-    [Z,~] = TDTR_Bidirectional_SUB_C(Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
+    % Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
+    % [Z,~] = TDTR_Bidirectional_SUB_C(Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
+    Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
+    [Z,~] = TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
     fprintf('Data fit completed\n')
 else    
 
 % manual fitting        
-    answ = 1;
-    while answ == 1
-        TDTR_Bidirectional_SUB_C(X0,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
+    globAnsw = 1;
+
+    while globAnsw == 1
+        %TDTR_Bidirectional_SUB_C(X0,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
+        TDTR_Bidirectional_SUB_C(currFigN,X0,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
+        currFigN = currFigN + 1;
+        globAnsw = 0;
         hold on
-        answ = input('Continue? (Yes: "1", No: "0")');
+        answ = input('Continue with thermal conductivity (Lambda)? (Yes: "1", No: "0")');
         if answ == 1
+            globAnsw = 1;
             for i = 1:length(FITNLambda)
-                num = sprintf('\t%g',FITNLambda(i));
-                text = strcat('Input new value for lambda',num);
+                % num = sprintf('\t%f',FITNLambda(i));
+                num = sprintf('\t%e',X0(i));
+                text = strcat('Input new value for lambda',num,' : > ');
                 X0(i) = input(text);
             end
         end
+        
+        answ = input('Continue with heat capacities? (Yes: "1", No: "0")');
+        if answ == 1
+            globAnsw = 1;
+            for i = 1:length(FITNC)
+                % num = sprintf('\t%f',FITNC(i));
+                num = sprintf('\t%e',X0(i+length(FITNLambda)));
+                text = strcat('Input new value for C',num,' : > ');
+                X0(i+length(FITNLambda)) = input(text);
+            end
+        end
+
+        answ = input('Continue with film thicknesses? (Yes: "1", No: "0")');
+        if answ == 1
+            globAnsw = 1;
+            for i = 1:length(FITNh)
+                % num = sprintf('\t%f',FITNh(i));
+                num = sprintf('\t%e',X0(i+length(FITNLambda)+length(FITNC)));
+                text = strcat('Input new value for h',num,' : > ');
+                X0(i+length(FITNLambda)+length(FITNC)) = input(text);
+            end
+        end
+
+        % PUMP POWER :: it does not affect the fit...
+        % answ = input('Continue with pump power? (Yes: "1", No: "0")');
+        % if answ == 1
+        %    globAnsw = 1;
+        %    
+        %    num = sprintf('\t%e\t',P_pump);
+        %    text = strcat('Input new value for Ppump',num,' : > ');
+        %    P_pump = input(text);
+        %    
+        % end
+
     end
     Xsol = X0;
 end
@@ -120,6 +174,13 @@ for i = 1:length(FITNh)
     h(FITNh(i)) = Xsol(length(FITNLambda)+length(FITNC)+i);
 end
 
+fprintf("Fit results are as follows (<Xsol> variable):\n");
+fprintf("%3.5e\n",Xsol);
+
+% temp >>> ;
+return
+% <<< tmp ;
+
 %% COMPUTE Tin, Tout, Ratio AND SAVE PARAMETERS
 [Ts,~] = TDTR_Bidirectional_SUB_B(tdelay_model,tau_rep,f,Lambda,C,h,eta,r_pump_model,r_probe,P_pump,nnodes,X_heat,X_temp);
 
@@ -128,8 +189,10 @@ Tout_model = imag(Ts)*AbsProf./(ones(size(AbsProf))'*AbsProf);
 Ratio_model = -Tin_model./Tout_model;
 
 if save_results
-    save(strcat(pwd,'/',datafile(1:end-4),'_FIT',addfilename,'.mat'));
+    save(strcat(pwd,'/',datafile(1:end-4),'_FITresults',addfilename,'.mat'));
 end
+
+
 
 %% PLOT RESULTS
 defsize = [0 0 30 15]; % set the size of the figure (left bottom width height)    

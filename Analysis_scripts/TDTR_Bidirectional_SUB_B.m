@@ -67,12 +67,12 @@ for i = 1:length(X_heat)
 
     Tm = Resum+ii*Imsum; %
 
-    %The term .*exp(ii*2*pi*f*tdelay) here is the phase shift fix term used to deal with "pump
+    %This exp term here is the phase shift fix term used to deal with "pump
     %on a stage" setup configuration. This is not the case with AALTO TDTR
     %setup and the term should thus be removed when dealing with data
     %measured with AALTO TDTR setup.
     
-    T(:,i) = Tm;%.*exp(ii*2*pi*f*tdelay); %Reflectance Fluxation (Complex)
+    T(:,i) = Tm; %.*exp(ii*2*pi*f*tdelay); %Reflectance Fluxation (Complex)
 
     Ratio(:,i) = -real(T(:,i))./imag(T(:,i));
 end
