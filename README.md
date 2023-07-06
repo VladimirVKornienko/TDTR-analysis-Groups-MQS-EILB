@@ -5,7 +5,7 @@ The code has been originally created in the group of Prof. David G. Cahill, and 
 https://cahill.matse.illinois.edu/software-and-data/
 
 Major non-trivial changes:\
-(1) In our set-up, the mechanical delay is introduced in the probe path, not in the pump path; hence, exponential factor is replaced with '1'.\
+(1) In our set-up, the mechanical delay is introduced in the probe path, not in the pump path; hence, exponential factor is replaced with '1' ("TDTR_Bidirectional_SUB_B.m", line 75).\
 (2) We use 400 nm light for pumping and 800 nm for probing; 'AbsProfile' variable should be modified to take into account different field propagation depth for pump and probe. This needs more investigation...\
 (3) Same applies to the heating model: whether it is a top surface of the transducer that has constant temperature, or whether it is a bulk of the transducer that is nbeing heated with hot electrons excited by the pump light.
 
