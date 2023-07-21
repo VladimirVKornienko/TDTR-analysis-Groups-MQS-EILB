@@ -8,10 +8,11 @@ clear all
 %-------------------------------BEGIN CODE---------------------------------
 
 %% USER INPUT
-   flagUseMovMean = false;   % true or false: apply the moving average transform of the size
+   %flagUseMovMean = false;%true;   % true or false: apply the moving average transform of the size
+   flagUseMovMean = 0; %0: raw data, 1: V_out, 2: V_in and V_out, 3: Ratio. Apply the moving average transform of the size.
     movMeanWindow = 5;      % << (that size) to the RATIO data.
 
-    [SysParam] = SiO2_temp(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
+    [SysParam] = CuI_parameter(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
       datafile = SysParam.filename; %'Data_Example.mat';  % load data (.mat)
          tnorm = 200;  % choose time value for normalization of Vin (ps)
        auto_on = 0;  % 1 for automatic fitting, 0 for manual fitting
@@ -38,7 +39,7 @@ AbsProf = SysParam.AbsProf;  % COLUMN vector describing absorption profile throu
 
 f = SysParam.f;  % Laser modulation frequence(Hz)
 r_pump = SysParam.r_pump;  % Pump 1/e^2 radius (m)
-r_probe = SysParam.r_probe;   % Probe 1/e^2 radius (m)  % CORRECTED FROM ".r_pump", July 2023. %
+r_probe = SysParam.r_probe;   % Probe 1/e^2 radius (m)  (was SysParam.r_pump before July4, 2023)
 tau_rep = SysParam.tau_rep;  % Laser repetition period (s)
 P_pump = SysParam.P_pump;  % absorbed pump power (transmission of objective X absorbance X pump power) 
 P_probe = SysParam.P_probe;  % absorbed pump power (transmission of objective X absorbance X pump power); assumes AF chopper is OFF!  If not, then you need to multiply the probe power by 2.
@@ -77,9 +78,22 @@ else
 end
 
 %% Moving average for <RATIO> data, if needed:
-if (flagUseMovMean)
-    Ratio_data = movmean(Ratio_data,movMeanWindow);
+switch flagUseMovMean
+    case 1 % average Vout
+        Vout_data = movmean(Vout_data,movMeanWindow);
+        Ratio_data = -Vin_data./Vout_data;
+    case 2 % average Vout and Vin
+        Vout_data = movmean(Vout_data,movMeanWindow);
+        Vin_data = movmean(Vin_data,movMeanWindow);
+        Ratio_data = -Vin_data./Vout_data;
+    case 3 % average ratio
+        Ratio_data = movmean(Ratio_data,movMeanWindow);
+    otherwise % raw data, do nothing
+
 end
+% if (flagUseMovMean)
+%     Ratio_data = movmean(Ratio_data,movMeanWindow);
+% end
 
 %% DO FITTING
 
@@ -101,7 +115,8 @@ end
 if auto_on == 1      
     % Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
     % [Z,~] = TDTR_Bidirectional_SUB_C(Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
-    Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
+    % Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
+    [Xsol,fval,exitflag,output] = fminsearch(@(X) TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
     [Z,~] = TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
     fprintf('Data fit completed\n')
 else    
@@ -111,7 +126,7 @@ else
 
     while globAnsw == 1
         %TDTR_Bidirectional_SUB_C(X0,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
-        TDTR_Bidirectional_SUB_C(currFigN,X0,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
+        TDTR_Bidirectional_SUB_C(currFigN,X0,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf); % Originally does not store the value!
         currFigN = currFigN + 1;
         globAnsw = 0;
         hold on
@@ -177,7 +192,9 @@ end
 fprintf("Fit results are as follows (<Xsol> variable):\n");
 fprintf("%3.5e\n",Xsol);
 
+
 % temp >>> ;
+toc
 return
 % <<< tmp ;
 

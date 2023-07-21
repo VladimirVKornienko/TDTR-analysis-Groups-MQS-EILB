@@ -3,6 +3,9 @@
 % This function is based on TDTR_FIT_V4.m published by Joseph P. Feser under http://users.mrl.illinois.edu/cahill/tcdata/tcdata.html (12-September-2012).
 % This function can handle varying pump size over delay time thanks to Greg Hohensee.
 
+% Currently penalizes optimization if it finds negative material parameter
+% values (lambda, C, h) by setting Z to inf in that case.
+
 % Input paameters:
 
 % ADDED: figNum - for "figure(figNum)".
@@ -47,12 +50,22 @@ Tout_model = imag(Ts)*AbsProf./(ones(size(AbsProf))'*AbsProf);
 Ratio_model = -Tin_model./Tout_model;
 
 res = ((Ratio_model-Ratio_data)./Ratio_model).^2;
-Z = sqrt(sum(res))/length(res)
+
+
+%Z = sqrt(sum(res))/length(res)
+% Penalizes negative material parameter values
+if min([Lambda C h]) < 0
+    Z = inf
+else
+    Z = sqrt(sum(res))/length(res)
+end
 X
 
 figure(figNum)
 clf
-semilogx(tdelay, -real(Ts)./imag(Ts),'g')
+%scalingVal = 1; % I added this for testing, remove (just scales values to
+% observe if fit shape is similar to data
+semilogx(tdelay, -real(Ts)./imag(Ts),'g')%semilogx(tdelay, -scalingVal*real(Ts)./imag(Ts),'g')%
 hold on
-semilogx(tdelay,Ratio_data,'ob',tdelay,Ratio_model,'k'); 
+semilogx(tdelay,Ratio_data,'ob',tdelay,Ratio_model,'k'); %semilogx(tdelay,Ratio_data,'ob',tdelay,scalingVal*Ratio_model,'k')
 pause(0.01)
