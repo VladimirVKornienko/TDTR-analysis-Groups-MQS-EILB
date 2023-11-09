@@ -23,6 +23,11 @@ clear all
                     %expense of some precision, this gives you the option. CHANGE WITH CARE!
 
 %% LOAD PARAMETERS
+
+% Added by Vihtori: >>>>> %
+Labels = SysParam.Labels; % Labels for sensitivity plots
+% <<<<< %
+
 % ROW vectors starting with top layer
 Lambda = SysParam.Lambda; % Thermal conductivities (W m^-1 K^-1)
 C = SysParam.C;  % Volumetric heat capacities (J m^-3 K^-1)
