@@ -11,7 +11,7 @@ clear all
    flagUseMovMean = false;   % true or false: apply the moving average transform of the size
     movMeanWindow = 5;      % << (that size) to the RATIO data.
 
-    [SysParam] = SiO2_temp(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
+    [SysParam] = curr_Nov07_CuI_80degGLAD_pt1_2MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
       datafile = SysParam.filename; %'Data_Example.mat';  % load data (.mat)
          tnorm = 200;  % choose time value for normalization of Vin (ps)
        auto_on = 0;  % 1 for automatic fitting, 0 for manual fitting
