@@ -123,31 +123,107 @@ if SIM
     xlim([1 5000])
     ylim([0.1 10*ceil(log10(max(Tin_model)))])
 end
+
+%% THIS PART HAS BEEN UPDATED BY VIHTORI.
+% Commenting out all the unnecessary parts below,
+% and adding the new material...  >>>>>
+
+%% OLD PART: >>>>> %%
+%if SENS
+%    ColMat = [0 0 0; 1 0 0; 0 0 1; 0 0.5 0; 1 1 0; 0.5 0.5 0.5; 1 0.64 0];
+%    subplot(1,2,1) %plots subplot in top left corner of 2x2 grid; use 'position' when adding y-axis on the right side, else it does not work well
+%    for n = 1:length(Lambda)
+%        semilogx(tdelay_model*1e12,S_C(:,n),'o','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+%        hold on
+%        plot(tdelay_model*1e12,S_L(:,n),'+','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+%        plot(tdelay_model*1e12,S_h(:,n),'x','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+%    end
+%    plot(tdelay_model*1e12,S_r_pump,'k--','LineWidth',1)
+%   if length(Lambda) == 2
+%        legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_r_pump','Location','NorthEastOutside');
+%    elseif length(Lambda) == 3
+%        legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(3)}','S_r_pump','Location','NorthEastOutside');
+%   elseif length(Lambda) == 4
+%       legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(3)}','S_{C(4)}','S_{L(4)}','S_{h(4)}','S_{rpumpprobe}','Location','NorthEastOutside');
+%    elseif length(Lambda) == 5
+%        legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(4)}','S_{C(4)}','S_{L(4)}','S_{h(4)}','S_{C(5)}','S_{L(5)}','S_{h(5)}','S_r_pump','Location','NorthEastOutside');
+%    end
+%    set(gca,'TickLength',[0.02 0.025])
+%    set(gca,'LineWidth',1)
+%    set(gca,'FontSize',14,'FontName','Arial')
+%    xlim([10 5000])
+%    set(gca,'XTick',[10^1 10^2 10^3]);
+%    set(gca,'XTicklabel',[10^1 10^2 10^3]);
+%    % ylim([0 350])
+%    % set(gca,'YTick',[0.1 1 10 100])
+%    % set(gca,'YTicklabel',[0.1 1 10 100]);
+%    xlabel('\it{t}\rm (ps)','FontSize',14,'FontName','Arial')
+%    ylabel('Sensitivity coefficient for Ratio','FontSize',14,'FontName','Arial')
+%   
+%    subplot(1,2,2) %plots subplot in top left corner of 2x2 grid; use 'position' when adding y-axis on the right side, else it does not work well
+%    for n = 1:length(Lambda)
+%        semilogx(tdelay_model*1e12,S_CX(:,n),'o','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+%        hold on
+%        plot(tdelay_model*1e12,S_LX(:,n),'+','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+%        plot(tdelay_model*1e12,S_hX(:,n),'x','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+%    end
+%   plot(tdelay_model*1e12,S_r_pumpX,'k--','LineWidth',1)
+%   if length(Lambda) == 2
+%       legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_r_pump','Location','NorthEastOutside');
+%   elseif length(Lambda) == 3
+%       legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(3)}','SX_r_pump','Location','NorthEastOutside');
+%   elseif length(Lambda) == 4
+%       legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(3)}','SX_{C(4)}','SX_{L(4)}','SX_{h(4)}','SX_{rpumpprobe}','Location','NorthEastOutside');
+%   elseif length(Lambda) == 5
+%       legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(4)}','SX_{C(4)}','SX_{L(4)}','SX_{h(4)}','SX_{C(5)}','SX_{L(5)}','SX_{h(5)}','SX_r_pump','Location','NorthEastOutside');
+%    end
+%    set(gca,'TickLength',[0.02 0.025])
+%    set(gca,'LineWidth',1)
+%    set(gca,'FontSize',14,'FontName','Arial')
+%    xlim([10 5000])
+%    set(gca,'XTick',[10^1 10^2 10^3]);
+%    set(gca,'XTicklabel',[10^1 10^2 10^3]);
+%    % ylim([0 350])
+%    % set(gca,'YTick',[0.1 1 10 100])
+%    % set(gca,'YTicklabel',[0.1 1 10 100]);
+%   xlabel('\it{t}\rm (ps)','FontSize',14,'FontName','Arial')
+%    ylabel('Sensitivity coefficient for Vin','FontSize',14,'FontName','Arial')
+%end
+
+%% <<<<< OLD PART. %%
+%% NEW PART: >>>>> %%
+
 if SENS
-    ColMat = [0 0 0; 1 0 0; 0 0 1; 0 0.5 0; 1 1 0; 0.5 0.5 0.5; 1 0.64 0];
+    hold off
+    %ColMat = [0 0 0; 1 0 0; 0 0 1; 0 0.5 0; 1 1 0; 0.5 0.5 0.5; 1 0.64 0];
     subplot(1,2,1) %plots subplot in top left corner of 2x2 grid; use 'position' when adding y-axis on the right side, else it does not work well
+    colors = ["red", "blue", "green", "magenta", "black", "yellow"];
     for n = 1:length(Lambda)
-        semilogx(tdelay_model*1e12,S_C(:,n),'o','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+        semilogx(tdelay_model*1e12,S_C(:,n),'o','Color',colors(n),'LineWidth',1,'MarkerSize',4)
         hold on
-        plot(tdelay_model*1e12,S_L(:,n),'+','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
-        plot(tdelay_model*1e12,S_h(:,n),'x','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+        plot(tdelay_model*1e12,S_L(:,n),'--','Color',colors(n),'LineWidth',1,'MarkerSize',4) % linestyle was '+'
+        plot(tdelay_model*1e12,S_h(:,n),'-.','Color',colors(n),'LineWidth',1,'MarkerSize',4) % linestyle was 'x'
     end
-    plot(tdelay_model*1e12,S_r_pump,'k--','LineWidth',1)
+    plot(tdelay_model*1e12,S_r_pump,'y--','LineWidth',1) % linestyle was 'k--'
     if length(Lambda) == 2
-        legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_r_pump','Location','NorthEastOutside');
+        legend(sprintf('C_{%s}', Labels(1)),sprintf('L_{%s}', Labels(1)),sprintf('h_{%s}', Labels(1)),sprintf('C_{%s}', Labels(2)),sprintf('L_{%s}', Labels(2)),sprintf('h_{%s}', Labels(2)),'S_{rpump}','Location','NorthEastOutside');
+        %legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_r_pump','Location','NorthEastOutside');
     elseif length(Lambda) == 3
-        legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(3)}','S_r_pump','Location','NorthEastOutside');
+        legend(sprintf('C_{%s}', Labels(1)),sprintf('L_{%s}', Labels(1)),sprintf('h_{%s}', Labels(1)),sprintf('C_{%s}', Labels(2)),sprintf('L_{%s}', Labels(2)),sprintf('h_{%s}', Labels(2)),sprintf('C_{%s}', Labels(3)),sprintf('L_{%s}', Labels(3)),sprintf('h_{%s}', Labels(3)),'S_{rpump}','Location','NorthEastOutside');
+        %legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(3)}','S_r_pump','Location','NorthEastOutside');
     elseif length(Lambda) == 4
-        legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(3)}','S_{C(4)}','S_{L(4)}','S_{h(4)}','S_{rpumpprobe}','Location','NorthEastOutside');
+        legend(sprintf('C_{%s}', Labels(1)),sprintf('L_{%s}', Labels(1)),sprintf('h_{%s}', Labels(1)),sprintf('C_{%s}', Labels(2)),sprintf('L_{%s}', Labels(2)),sprintf('h_{%s}', Labels(2)),sprintf('C_{%s}', Labels(3)),sprintf('L_{%s}', Labels(3)),sprintf('h_{%s}', Labels(3)),sprintf('C_{%s}', Labels(4)),sprintf('L_{%s}', Labels(4)),sprintf('h_{%s}', Labels(4)),'S_{rpumpprobe}','Location','NorthEastOutside');
+        %legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(3)}','S_{C(4)}','S_{L(4)}','S_{h(4)}','S_{rpumpprobe}','Location','NorthEastOutside');
     elseif length(Lambda) == 5
-        legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(4)}','S_{C(4)}','S_{L(4)}','S_{h(4)}','S_{C(5)}','S_{L(5)}','S_{h(5)}','S_r_pump','Location','NorthEastOutside');
+        legend(sprintf('C_{%s}', Labels(1)),sprintf('L_{%s}', Labels(1)),sprintf('h_{%s}', Labels(1)),sprintf('C_{%s}', Labels(2)),sprintf('L_{%s}', Labels(2)),sprintf('h_{%s}', Labels(2)),sprintf('C_{%s}', Labels(3)),sprintf('L_{%s}', Labels(3)),sprintf('h_{%s}', Labels(3)),sprintf('C_{%s}', Labels(4)),sprintf('L_{%s}', Labels(4)),sprintf('h_{%s}', Labels(4)),sprintf('C_{%s}', Labels(5)),sprintf('L_{%s}', Labels(5)),sprintf('h_{%s}', Labels(5)),'S_{rpump}','Location','NorthEastOutside');
+        %legend('S_{C(1)}','S_{L(1)}','S_{h(1)}','S_{C(2)}','S_{L(2)}','S_{h(2)}','S_{C(3)}','S_{L(3)}','S_{h(4)}','S_{C(4)}','S_{L(4)}','S_{h(4)}','S_{C(5)}','S_{L(5)}','S_{h(5)}','S_r_pump','Location','NorthEastOutside');
     end
-    set(gca,'TickLength',[0.02 0.025])
-    set(gca,'LineWidth',1)
-    set(gca,'FontSize',14,'FontName','Arial')
-    xlim([10 5000])
-    set(gca,'XTick',[10^1 10^2 10^3]);
-    set(gca,'XTicklabel',[10^1 10^2 10^3]);
+    %set(gca,'TickLength',[0.02 0.025])
+    %set(gca,'LineWidth',1)
+    %set(gca,'FontSize',14,'FontName','Arial')
+    %xlim([10 5000])
+    %set(gca,'XTick',[10^1 10^2 10^3]);
+    %set(gca,'XTicklabel',[10^1 10^2 10^3]);
     % ylim([0 350])
     % set(gca,'YTick',[0.1 1 10 100])
     % set(gca,'YTicklabel',[0.1 1 10 100]);
@@ -155,33 +231,47 @@ if SENS
     ylabel('Sensitivity coefficient for Ratio','FontSize',14,'FontName','Arial')
     
     subplot(1,2,2) %plots subplot in top left corner of 2x2 grid; use 'position' when adding y-axis on the right side, else it does not work well
-    for n = 1:length(Lambda)
-        semilogx(tdelay_model*1e12,S_CX(:,n),'o','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+    %for n = 1:length(Lambda)
+    %    semilogx(tdelay_model*1e12,S_CX(:,n),'o','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+    %    hold on
+    %    plot(tdelay_model*1e12,S_LX(:,n),'+','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+    %    plot(tdelay_model*1e12,S_hX(:,n),'x','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+    %end
+    colors = ["red", "blue", "green", "magenta", "black", "yellow"];
+
+    for n = 1:length(Labels)
+        semilogx(tdelay_model*1e12,S_CX(:,n),'o','Color',colors(n),'LineWidth',1,'MarkerSize',4)
         hold on
-        plot(tdelay_model*1e12,S_LX(:,n),'+','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
-        plot(tdelay_model*1e12,S_hX(:,n),'x','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
+        plot(tdelay_model*1e12,S_LX(:,n),'--','Color',colors(n),'LineWidth',1,'MarkerSize',4)
+        plot(tdelay_model*1e12,S_hX(:,n),'-.','Color',colors(n),'LineWidth',1,'MarkerSize',4)
     end
-    plot(tdelay_model*1e12,S_r_pumpX,'k--','LineWidth',1)
+    plot(tdelay_model*1e12,S_r_pumpX,'y--','LineWidth',1)
     if length(Lambda) == 2
-        legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_r_pump','Location','NorthEastOutside');
+        legend(sprintf('C_{%s}', Labels(1)),sprintf('L_{%s}', Labels(1)),sprintf('h_{%s}', Labels(1)),sprintf('C_{%s}', Labels(2)),sprintf('L_{%s}', Labels(2)),sprintf('h_{%s}', Labels(2)),'S_{rpump}','Location','NorthEastOutside');
+        %legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_r_pump','Location','NorthEastOutside');
     elseif length(Lambda) == 3
-        legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(3)}','SX_r_pump','Location','NorthEastOutside');
+        legend(sprintf('C_{%s}', Labels(1)),sprintf('L_{%s}', Labels(1)),sprintf('h_{%s}', Labels(1)),sprintf('C_{%s}', Labels(2)),sprintf('L_{%s}', Labels(2)),sprintf('h_{%s}', Labels(2)),sprintf('C_{%s}', Labels(3)),sprintf('L_{%s}', Labels(3)),sprintf('h_{%s}', Labels(3)),'S_{rpump}','Location','NorthEastOutside');
+        %legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(3)}','SX_r_pump','Location','NorthEastOutside');
     elseif length(Lambda) == 4
-        legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(3)}','SX_{C(4)}','SX_{L(4)}','SX_{h(4)}','SX_{rpumpprobe}','Location','NorthEastOutside');
+        legend(sprintf('C_{%s}', Labels(1)),sprintf('L_{%s}', Labels(1)),sprintf('h_{%s}', Labels(1)),sprintf('C_{%s}', Labels(2)),sprintf('L_{%s}', Labels(2)),sprintf('h_{%s}', Labels(2)),sprintf('C_{%s}', Labels(3)),sprintf('L_{%s}', Labels(3)),sprintf('h_{%s}', Labels(3)),sprintf('C_{%s}', Labels(4)),sprintf('L_{%s}', Labels(4)),sprintf('h_{%s}', Labels(4)),'S_{rpumpprobe}','Location','NorthEastOutside');
+        %legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(3)}','SX_{C(4)}','SX_{L(4)}','SX_{h(4)}','SX_{rpumpprobe}','Location','NorthEastOutside');
     elseif length(Lambda) == 5
-        legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(4)}','SX_{C(4)}','SX_{L(4)}','SX_{h(4)}','SX_{C(5)}','SX_{L(5)}','SX_{h(5)}','SX_r_pump','Location','NorthEastOutside');
+        legend(sprintf('C_{%s}', Labels(1)),sprintf('L_{%s}', Labels(1)),sprintf('h_{%s}', Labels(1)),sprintf('C_{%s}', Labels(2)),sprintf('L_{%s}', Labels(2)),sprintf('h_{%s}', Labels(2)),sprintf('C_{%s}', Labels(3)),sprintf('L_{%s}', Labels(3)),sprintf('h_{%s}', Labels(3)),sprintf('C_{%s}', Labels(4)),sprintf('L_{%s}', Labels(4)),sprintf('h_{%s}', Labels(4)),sprintf('C_{%s}', Labels(5)),sprintf('L_{%s}', Labels(5)),sprintf('h_{%s}', Labels(5)),'S_{rpump}','Location','NorthEastOutside');
+        %legend('SX_{C(1)}','SX_{L(1)}','SX_{h(1)}','SX_{C(2)}','SX_{L(2)}','SX_{h(2)}','SX_{C(3)}','SX_{L(3)}','SX_{h(4)}','SX_{C(4)}','SX_{L(4)}','SX_{h(4)}','SX_{C(5)}','SX_{L(5)}','SX_{h(5)}','SX_r_pump','Location','NorthEastOutside');
     end
-    set(gca,'TickLength',[0.02 0.025])
-    set(gca,'LineWidth',1)
-    set(gca,'FontSize',14,'FontName','Arial')
-    xlim([10 5000])
-    set(gca,'XTick',[10^1 10^2 10^3]);
-    set(gca,'XTicklabel',[10^1 10^2 10^3]);
+    %set(gca,'TickLength',[0.02 0.025])
+    %set(gca,'LineWidth',1)
+    %set(gca,'FontSize',14,'FontName','Arial')
+    %xlim([10 5000])
+    %set(gca,'XTick',[10^1 10^2 10^3]);
+    %set(gca,'XTicklabel',[10^1 10^2 10^3]);
     % ylim([0 350])
     % set(gca,'YTick',[0.1 1 10 100])
     % set(gca,'YTicklabel',[0.1 1 10 100]);
     xlabel('\it{t}\rm (ps)','FontSize',14,'FontName','Arial')
     ylabel('Sensitivity coefficient for Vin','FontSize',14,'FontName','Arial')
 end
+
+%% <<<<< %%
 
 toc
