@@ -10,3 +10,5 @@ Major non-trivial changes:\
 (3) Same applies to the heating model: whether it is a top surface of the transducer that has constant temperature, or whether it is a bulk of the transducer that is nbeing heated with hot electrons excited by the pump light.
 
 Please **do not put the set-up control software here**, due to potential copyright issues with the lock-in and delay stage manufacturers.
+
+The 'main' branch has now the changes incorporated that have been made by Vihtori in line with his commit No. 96087f2 from 21.07.2023.
