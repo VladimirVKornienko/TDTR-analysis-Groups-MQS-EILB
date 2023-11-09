@@ -8,7 +8,13 @@ clear all
 %-------------------------------BEGIN CODE---------------------------------
 
 %% USER INPUT
-   flagUseMovMean = false;   % true or false: apply the moving average transform of the size
+   
+    % Updated by Vihtori: >>>>> %
+    %flagUseMovMean = false;   % true or false: apply the moving average transform of the size
+    flagUseMovMean = 0;  % Apply the moving average transform to the given value.
+    % 0: raw data (no smoothing), 1: V_out, 2: V_in and V_out, 3: Ratio.
+    % <<<<< %
+
     movMeanWindow = 5;      % << (that size) to the RATIO data.
 
     [SysParam] = curr_Nov07_CuI_80degGLAD_pt1_2MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
@@ -77,9 +83,25 @@ else
 end
 
 %% Moving average for <RATIO> data, if needed:
-if (flagUseMovMean)
-    Ratio_data = movmean(Ratio_data,movMeanWindow);
+% In MATLAB, "movmean(A)" has the same number of elements as "A".
+
+% Updated by Vihtori: >>>>> %
+%if (flagUseMovMean)
+%    Ratio_data = movmean(Ratio_data,movMeanWindow);
+%end
+switch flagUseMovMean
+    case 1 % average Vout
+        Vout_data = movmean(Vout_data, movMeanWindow);
+        Ratio_data = -Vin_data./Vout_data;
+    case 2 % average Vout and Vin
+        Vout_data = movmean(Vout_data, movMeanWindow);
+        Vin_data = movmean(Vin_data, movMeanWindow);
+        Ratio_data = -Vin_data./Vout_data;
+    case 3 % average ratio
+        Ratio_data = movmean(Ratio_data, movMeanWindow);
+    otherwise % raw data, do nothing
 end
+% <<<<< %
 
 %% DO FITTING
 
