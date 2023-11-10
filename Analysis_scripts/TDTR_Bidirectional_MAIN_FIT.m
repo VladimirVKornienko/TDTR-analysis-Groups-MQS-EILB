@@ -5,6 +5,11 @@
 tic 
 clear all
 
+%%  Note! This fitting script accept the pre-processed data.  %%
+%% The script only uses the RATIO field, if not using the smoothing (then, Vin and Vout also). %%
+
+%% TODO later: remove smoothing into the pre-processing step! %%
+
 %-------------------------------BEGIN CODE---------------------------------
 
 %% USER INPUT
@@ -17,7 +22,7 @@ clear all
 
     movMeanWindow = 5;      % << (that size) to the RATIO data.
 
-    [SysParam] = curr_Nov07_CuI_80degGLAD_pt1_2MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
+    [SysParam] = curr_Nov07_Au_on_SiO2_2MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
       datafile = SysParam.filename; %'Data_Example.mat';  % load data (.mat)
          tnorm = 200;  % choose time value for normalization of Vin (ps)
        auto_on = 0;  % 1 for automatic fitting, 0 for manual fitting
@@ -66,7 +71,13 @@ end
 
 
 %% IMPORT DATA
-load(datafile);
+
+% upd. 10.11.2023: >>>  %
+%load(datafile);
+Data = struct([]);      % empty structure
+Data = load(datafile);  % load data
+% <<<              <<<  %
+
 tdelay_raw = Data.tdelay*1e-12; % delay time (s)
 Vin_raw = Data.Vin;  % in-phase TDTR signal (microvolts)
 Vout_raw = Data.Vout;  % out-of-phase TDTR signal (microvolts)
