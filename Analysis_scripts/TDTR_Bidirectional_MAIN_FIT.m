@@ -80,10 +80,12 @@ end
 %% IMPORT DATA
 
 % upd. 10.11.2023: >>>  %
-%load(datafile);
-Data = struct([]);      % empty structure
-Data = load(datafile);  % load data
+%Data = struct([]);      % empty structure
+%Data = load(datafile);  % load data
 % <<<              <<<  %
+
+% roll back
+load(datafile);
 
 tdelay_raw = Data.tdelay*1e-12; % delay time (s)
 Vin_raw = Data.Vin;  % in-phase TDTR signal (microvolts)
