@@ -12,7 +12,7 @@ clear all
      % load_Data = 0; if load_Data, load('struct_test_data.mat'), tnorm = 200; end   %load data (.mat), choose time value for normalization of Vin (ps)
      load_Data = 1; if load_Data, load(SysParam.filename), tnorm = 200; end   %load data (.mat), choose time value for normalization of Vin (ps)
   save_results = 0; if save_results, savefile = 'AN160219c_TDTR_Bidirectional_SENS'; end   % filename for saving parameters and results
-           SIM = 1;  % do simulation
+           SIM = 0;  % do simulation    % 0 is strongly preferred; did not test with '1'. (10.11.2023). %
           SENS = 1;  % compute sensitivities                        
            Col = 'k';  % define color of model curve in results plot for simlation
       ClearFig = 1;  % clear results figure       
@@ -204,9 +204,11 @@ if SENS
     %ColMat = [0 0 0; 1 0 0; 0 0 1; 0 0.5 0; 1 1 0; 0.5 0.5 0.5; 1 0.64 0];
     subplot(1,2,1) %plots subplot in top left corner of 2x2 grid; use 'position' when adding y-axis on the right side, else it does not work well
     colors = ["red", "blue", "green", "magenta", "black", "yellow"];
+    % hold on % << this position is not totally correct:
+    % first we need to make a plot, and only then add more plots to it.
     for n = 1:length(Lambda)
         semilogx(tdelay_model*1e12,S_C(:,n),'o','Color',colors(n),'LineWidth',1,'MarkerSize',4)
-        hold on
+        hold on     % << thus this 'hold' is here.
         plot(tdelay_model*1e12,S_L(:,n),'--','Color',colors(n),'LineWidth',1,'MarkerSize',4) % linestyle was '+'
         plot(tdelay_model*1e12,S_h(:,n),'-.','Color',colors(n),'LineWidth',1,'MarkerSize',4) % linestyle was 'x'
     end
@@ -236,6 +238,8 @@ if SENS
     xlabel('\it{t}\rm (ps)','FontSize',14,'FontName','Arial')
     ylabel('Sensitivity coefficient for Ratio','FontSize',14,'FontName','Arial')
     
+    hold off
+
     subplot(1,2,2) %plots subplot in top left corner of 2x2 grid; use 'position' when adding y-axis on the right side, else it does not work well
     %for n = 1:length(Lambda)
     %    semilogx(tdelay_model*1e12,S_CX(:,n),'o','Color',ColMat(n,:),'LineWidth',1,'MarkerSize',4)
@@ -276,6 +280,8 @@ if SENS
     % set(gca,'YTicklabel',[0.1 1 10 100]);
     xlabel('\it{t}\rm (ps)','FontSize',14,'FontName','Arial')
     ylabel('Sensitivity coefficient for Vin','FontSize',14,'FontName','Arial')
+
+    hold off
 end
 
 %% <<<<< %%
