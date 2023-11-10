@@ -15,10 +15,13 @@ function [TDTR_Data_Out] = RemoveNaNfieldsFromTheStruct(TDTR_Data_In, verboseFla
     TDTR_Data_Out = table2struct(TDTR_Data_Out,'ToScalar',true);
     
     tmpNumDelItems = round(tmpBefore-length(TDTR_Data_Out.stagePosition));
-    if (tmpNumDelItems == 1)
-        fprintf("Deleted 1 entry.")
-    else
-        fprintf("Deleted %d entry(ies).", length(TDTR_Data_Out.stagePosition))
+    
+    if (verboseFlag)
+        if (tmpNumDelItems == 1)
+            fprintf("Deleted 1 entry.")
+        else
+            fprintf("Deleted %d entry(ies).", length(TDTR_Data_Out.stagePosition))
+        end
     end
     %%% <<< %%%
     
