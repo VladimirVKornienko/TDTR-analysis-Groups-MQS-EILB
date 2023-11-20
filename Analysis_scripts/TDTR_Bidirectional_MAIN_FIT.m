@@ -14,7 +14,7 @@ clear all
 
 %% USER INPUT
    
-    [SysParam] = curr_Nov07_Au_on_SiO2_2MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
+    [SysParam] = curr_Nov07_Au_on_SiO2_5MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
       datafile = SysParam.filename; %'Data_Example.mat';  % load data (.mat)
          tnorm = 200;  % choose time value for normalization of Vin (ps)
        auto_on = 0;  % 1 for automatic fitting, 0 for manual fitting
