@@ -16,12 +16,14 @@ clear all
    
     % 20.11.2023: Use 2 pairs of parameter + data files for fitting >>>
     % 2-nd parameter file: take mod. freq. only!! %
-  flagTwoFiles = false;
+    % Fit parameters should better coincide, but they are taken from the
+    % 1st file only.
+  flagTwoFiles = true;
     % <<< %
 
     [SysParam] = curr_Nov07_Au_on_SiO2_5MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
     if (flagTwoFiles)   % 20.11.2023 %
-        [SysParam2ndFile] = curr_Nov07_Au_on_SiO2_1MHz();
+        [SysParam2ndFile] = curr_Nov07_Au_on_SiO2_2MHz();
     end
 
     
@@ -30,7 +32,7 @@ clear all
         f2_datafile = SysParam2ndFile.filename;
     end                 % <<<<< %
          tnorm = 200;  % choose time value for normalization of Vin (ps)
-       auto_on = 0;  % 1 for automatic fitting, 0 for manual fitting
+       auto_on = 1;  % 1 for automatic fitting, 0 for manual fitting
   save_results = 1; if save_results, addfilename = ''; end  % saves results using datafile string as filename; you can add further information to the filename using the addfilename string
            Col = 'k';   % Change color of curve in results plots
       ClearFig = 1;  % Clear results figure
@@ -98,6 +100,7 @@ if (flagTwoFiles)  % << upd. 20.11.2023 << %
     % loading the 2-nd file:
 
     % JUST THE MODULATION FREQUENCY !! %
+    % Also adding f2_tdelay_min and f2_tdelay_max for compatibility. %
 
     % f2_Lambda = SysParam2ndFile.Lambda; % Thermal conductivities (W m^-1 K^-1)
     % f2_C = SysParam2ndFile.C;  % Volumetric heat capacities (J m^-3 K^-1)
@@ -121,8 +124,8 @@ if (flagTwoFiles)  % << upd. 20.11.2023 << %
     % f2_FITNC = SysParam2ndFile.FITNC;
     % f2_FITNh = SysParam2ndFile.FITNh;
     % Range of time delay range to fit (s)
-    % f2_tdelay_min = SysParam2ndFile.tdelay_min;
-    % f2_tdelay_max = SysParam2ndFile.tdelay_max;
+    f2_tdelay_min = SysParam2ndFile.tdelay_min;
+    f2_tdelay_max = SysParam2ndFile.tdelay_max;
     % 
     % if psc
     %     f2_r_pump_model = f2_r_pump*(1 + frac*f2_tdelay_model/3.65e-9); 
@@ -173,9 +176,10 @@ if (flagTwoFiles)   % <<< 20.11.2023 <<< %
     [~,f2_Vout_data] = extract_interior_V4(f2_tdelay_raw,f2_Vout_raw,f2_tdelay_min,f2_tdelay_max);
     [f2_tdelay_data,f2_Ratio_data] = extract_interior_V4(f2_tdelay_raw,f2_Ratio_raw,f2_tdelay_min,f2_tdelay_max);
     if psc
-        f2_r_pump_data = f2_r_pump*(1 + frac*f2_tdelay_data/3.65e-9);
+        % NB! the same parameter used as for the file No. 1 %
+        f2_r_pump_data = r_pump*(1 + frac*f2_tdelay_data/3.65e-9);
     else
-        f2_r_pump_data = f2_r_pump;
+        f2_r_pump_data = r_pump;
     end
 end
 
@@ -220,8 +224,8 @@ if auto_on == 1
         Xsol = fminsearch(@(X) (TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
            + TDTR_Bidirectional_SUB_C(currFigN+1, X,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)) ,X0); 
         
-        [Z,~] = TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
-            + TDTR_Bidirectional_SUB_C(currFigN+1, X,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
+        Z = (TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+            + TDTR_Bidirectional_SUB_C(currFigN+1, Xsol,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf));
     end
 
     fprintf('Data fit completed\n')
