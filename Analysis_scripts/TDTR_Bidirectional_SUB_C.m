@@ -53,9 +53,10 @@ res = ((Ratio_model-Ratio_data)./Ratio_model).^2;
 % X
 Z = sqrt(sum(res))/length(res);
 X;
-fprintf("Z = %0.3e\n",Z);
+fprintf("Z = %0.3e :\t",Z);
 fprintf("X = ");
 fprintf("%0.3e\t",X);
+fprintf(".\n");
 % <<<< 21.11.2023 <<<< %
 
 figure(figNum)
