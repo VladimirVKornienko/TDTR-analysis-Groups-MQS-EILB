@@ -47,8 +47,16 @@ Tout_model = imag(Ts)*AbsProf./(ones(size(AbsProf))'*AbsProf);
 Ratio_model = -Tin_model./Tout_model;
 
 res = ((Ratio_model-Ratio_data)./Ratio_model).^2;
-Z = sqrt(sum(res))/length(res)
-X
+
+% >>>> upd. 21.11.2023: make the output human-readable: >>>> %
+% Z = sqrt(sum(res))/length(res)
+% X
+Z = sqrt(sum(res))/length(res);
+X;
+fprintf("Z = %0.3e\n",Z);
+fprintf("X = ");
+fprintf("%0.3e\t",X);
+% <<<< 21.11.2023 <<<< %
 
 figure(figNum)
 clf
