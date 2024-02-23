@@ -1,16 +1,16 @@
-function [SysParam] = Apr19Fits_Si_050nmSiO2_2MHz()
+function [SysParam] = curr_Aug01_Au_Si_2MHz()
 
 %% DATA FILE NAME
 
-SysParam.filename = 'dataForFits\Si_050nmSiO2_2MHz_180423_161212_FIN_NoNaNs.mat';
+SysParam.filename = 'data\f27_s01_Au_Si_2MHz_long_010823_155540_FIN.mat';
 
 %% SAMPLE PROPERTIES (starting with top layer )
-% Al / interface / SiO2 / interface / Si:
-% Al and Si properties are the same as for "Apr19Fits_Si_PECVD_noSiO2_2MHz" file.
+% Au / interface / Ti / interface / Si:
+SysParam.Labels = ["Au", "Ti", "Si (substr.)"]; % Labels for each element in the lists below. Only used in SIM plots
 
-SysParam.Lambda  = [237 0.129 0.776 999 124];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.42 2.42 1.86 2.42 1.63]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [77.3365 1 33.2 1 1e6]*1e-9;  % Thicknesses (m)  
+SysParam.Lambda  = [315 0.081 21.9 0.082 124];  % Thermal conductivities (W m^-1 K^-1)
+SysParam.C       = [2.42 2.42 8.3 2.42 1.63]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.h       = [200 1 20 1 1e6]*1e-9;  % Thicknesses (m)  
 
 SysParam.eta     = ones(1,numel(SysParam.Lambda)); % Anisotropy parameter eta=kx/ky;
 SysParam.X_heat  = ((1:5:36)*1e-9)';  % Temperature response is calculated for each entry i of the COLUMN vector X_heat, where X_heat(i) defines the ininitesimal surface that is being heated 
@@ -29,9 +29,9 @@ SysParam.tdelay_model = logspace(log10(10e-12),log10(4e-9),60)'; % time delays f
 
 %% FIT SPECIFICATIONS
 % Choose layer indices; respective parameters are then adjusted in the fit;
-SysParam.FITNLambda = [3]; % [2 3 4]
-SysParam.FITNC = []; 
-SysParam.FITNh = [3];
+SysParam.FITNLambda = [1 2 3 4]; % [2 3 4]
+SysParam.FITNC = [3]; 
+SysParam.FITNh = [1 3];
 % Choose range of time delays to fit (s)
 SysParam.tdelay_min = 75e-12; % before Apr19: 30e-12; 
 SysParam.tdelay_max = 5000e-12;

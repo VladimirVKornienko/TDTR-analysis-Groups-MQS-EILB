@@ -18,11 +18,12 @@ clear all
     % 2-nd parameter file: take mod. freq. only!! %
     % Fit parameters should better coincide, but they are taken from the
     % 1st file only.
-  flagTwoFiles = true;
+  flagTwoFiles = false;  % false/true .
     % <<< %
 
-    [SysParam] = curr_Nov07_Au_on_SiO2_5MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
+    [SysParam] = curr_Nov07_Au_on_SiO2_2MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
     if (flagTwoFiles)   % 20.11.2023 %
+        % [SysParam2ndFile] = curr_Nov07_Au_on_SiO2_1MHz();
         [SysParam2ndFile] = curr_Nov07_Au_on_SiO2_2MHz();
     end
 
