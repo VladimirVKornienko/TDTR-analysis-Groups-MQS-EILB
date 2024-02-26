@@ -15,7 +15,10 @@
 % three additional arguments, that go at the
 % start of the new function:
 %
-% f2_Ratio_data, f2_tdelay, f2_f.
+% f2_Ratio_data, f2_tdelay, f2_f,
+% subD_c1empyric,subD_c2empyric :coefficients to multiply the errors
+% from the individual files. typically, equal.
+% common choices: 0, 0.1, 0.5, and 1.
 %
 % <<<< %
 
@@ -42,7 +45,7 @@
 
 %---------------------------- BEGIN CODE ----------------------------------
 
-function [ZratioERR] = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay,f2_f, figNum, X,Ratio_data,tdelay,tau_rep,f,Lambda,C,h,eta,r_pump,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
+function [ZratioERR] = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay,f2_f, subD_c1empyric,subD_c2empyric, figNum, X,Ratio_data,tdelay,tau_rep,f,Lambda,C,h,eta,r_pump,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)
 
 % "SUB_C" returns: % function [Z,Ratio_model] % 
 [subD_Z1,file1_Ratio_model] = TDTR_Bidirectional_SUB_C(figNum, X,Ratio_data,tdelay,tau_rep,f,Lambda,C,h,eta,r_pump,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
@@ -61,10 +64,11 @@ ZratioERR = sqrt(sum(ZratioERR))/length(ZratioERR);
 
 % IMP! Add the original files' fit errors to the ratio error, %
 % tune the coefficients, if needed... %
-subD_c1empyric = 0.2;
-subD_c2empyric = 0.2;
-ZratioERR = sqrt( subD_c1empyric*(subD_Z1)^2 + subD_c2empyric*(subD_Z2)^2 + (ZratioERR)^2);
-fprintf("Total error: %f\n",ZratioERR);
+%subD_c1empyric = 0.2;
+%subD_c2empyric = 0.2;
+ZratioERR = sqrt( subD_c1empyric*(subD_Z1)^2 + subD_c2empyric*(subD_Z2)^2 + (ZratioERR)^2) ...
+    / sqrt(subD_c1empyric + subD_c2empyric + 1);
+fprintf("Total* error: %f\n",ZratioERR);
 % <<< %
 
 % fprintf("%f",ZratioERR);

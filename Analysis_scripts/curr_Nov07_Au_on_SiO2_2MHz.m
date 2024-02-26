@@ -19,17 +19,30 @@ SysParam.Labels = ["Au", "Ti", "SiO2 (substr.)"]; % Labels for each element in t
 
 
 %% Parameter values:
-SysParam.Lambda  = [315 0.08 1.24];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.64 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [50.0 5 1e6]*1e-9;  % Thicknesses (m)
+SysParam.Lambda  = [312.8 0.154 1.022];  % Thermal conductivities (W m^-1 K^-1)
+SysParam.C       = [2.413 2.64 1.820]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.h       = [50.1 5 1e6]*1e-9;  % Thicknesses (m)
 
 
 % temp: >>> %
-SysParam.Lambda  = [315 0.08 1.24];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.64 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [50.0 5 1e6]*1e-9;  % Thicknesses (m)
+SysParam.Lambda  = [311 0.24 1.10];  % Thermal conductivities (W m^-1 K^-1)
+SysParam.C       = [2.38 2.64 1.85]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.h       = [50.1 5 1e6]*1e-9;  % Thicknesses (m)
 % <<< %
 
+% temp-2: >>> %
+SysParam.Lambda  = [310.3 0.367 1.152];  % Thermal conductivities (W m^-1 K^-1)
+SysParam.C       = [2.363 2.64 1.871]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.h       = [50.1 5 1e6]*1e-9;  % Thicknesses (m)
+% <<< %
+
+
+%% upd. 26.02.2024: %%
+% TOLERANCES / SPREADs: >>> %
+SysParam.rangeLambda  = 1000*[30 100 0.5];  % Thermal conductivities (W m^-1 K^-1)
+SysParam.rangeC       = 1000*[0.4 0.4 0.4]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.rangeh       = 100*[5.0 0.0001 0.0001]*1e-9;  % Thicknesses (m)
+% <<< %
 
 
 %% other parameters
@@ -42,6 +55,7 @@ SysParam.AbsProf = exp(-4*pi*4.9*SysParam.X_heat/400e-9);  % COLUMN vector descr
 SysParam.f        = 2.0e6;  % Laser modulation frequency (Hz)
 SysParam.r_pump   = 0.5*56.1e-6;  % Pump 1/e^2 radius (m)
 SysParam.r_probe  = 0.5*20.3e-6;  % Probe 1/e^2 radius, (m)
+
 SysParam.tau_rep  = 1/(75.8e6);   % Laser repetition period (s) 
 SysParam.P_pump   = 0.8*21.0e-3; % 0.99*0.3*37e-3;   % absorbed pump power (transmission of objective * absorbance * pump power) 
 SysParam.P_probe  = 0.4*50.0e-3; % 0.8*0.3*17.5e-3;   % absorbed probe power (transmission of objective * absorbance * probe power); assumes AF chopper is OFF!  If not, then you need to multiply the probe power by 2.

@@ -37,10 +37,18 @@ SysParam.h       = [56 1 196 1e6]*1e-9;  % Thicknesses (m)
 
 
 %% Temp for fitting:
-SysParam.Lambda  = [315 0.08 3.0 1.24];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.49 1.55 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [56 1 196 1e6]*1e-9;  % Thicknesses (m)
+SysParam.Lambda  = [310.3 0.367 1.68 1.152];  % Thermal conductivities (W m^-1 K^-1)
+SysParam.C       = [2.363 2.64 1.55 1.871]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.h       = [50.1 5 196 1e6]*1e-9;  % Thicknesses (m)
+% <<< %
 
+
+%% upd. 26.02.2024: %%
+% TOLERANCES / SPREADs: >>> %
+SysParam.rangeLambda  = 1000*[30 100 100 2];  % Thermal conductivities (W m^-1 K^-1)
+SysParam.rangeC       = 1000*[0.4 0.0001 100 0.4]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.rangeh       = 100*[5.0 0.0001 10.0 0.0001]*1e-9;  % Thicknesses (m)
+% <<< %
 
 
 %% other parameters

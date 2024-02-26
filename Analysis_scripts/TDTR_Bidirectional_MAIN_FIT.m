@@ -22,19 +22,31 @@ clear all
 
 % upd. 23.02.2024:
 %
-    flagTwoFiles = 2;
+
+    flagTwoFiles = 0;
     % 0: use only one file for fitting;
     % 1: use two files for fitting, additive error
     % 2: use two files for fitting, compute the ratio (new - Feb. 23)
 
     % <<< %
 
+    % upd. 26.02.2024: >>> %
+    flagUseDeviationFromInitialParamGuess = true;
+    % <- specifies if to compute the difference from the X0.
+    % <- requires the widths to be specified in the parameter files.
+    % <<<< %
+
     [SysParam] = curr_Nov07_Au_on_SiO2_2MHz(); %Parameter_Example(); % load parameters (matlab function, parameters are assigned in next section below)
     if (flagTwoFiles == 0)   % 20.11.2023 % 23.02.2024 %
         % nothing happens
     else   % flagTwoFiles == 1 or 2
         % [SysParam2ndFile] = curr_Nov07_Au_on_SiO2_1MHz();
-        [SysParam2ndFile] = curr_Nov07_Au_on_SiO2_5MHz();
+        [SysParam2ndFile] = curr_Nov07_Au_on_SiO2_1MHz();
+        subD_c1empyric = 0.5; % how much 'per file' error to admix
+        subD_c2empyric = 0.5; %   to the ''ratio of ratios' error.
+        % set to 0.2 or 0.5 each, if you prefer to fit the ratio;
+        % set to e.g. 10 if you prefer to fit the two files (but not R1/R2)
+        % simultaneously.
     end
 
     
@@ -80,6 +92,12 @@ Lambda = SysParam.Lambda; % Thermal conductivities (W m^-1 K^-1)
 C = SysParam.C;  % Volumetric heat capacities (J m^-3 K^-1)
 h = SysParam.h;  % Thicknesses (m)
 eta = SysParam.eta;   % Anisotropy parameter eta=kx/ky;
+
+% upd. 26.02.2024: >>> acceptable deviations >>> %
+rangeLambda = SysParam.rangeLambda; % (W m^-1 K^-1)
+rangeC = SysParam.rangeC;  % (J m^-3 K^-1)
+rangeh = SysParam.rangeh;  % (m)
+% <<< %
 
 X_heat = SysParam.X_heat;  % Temperature response is calculated for each entry i of the COLUMN vector X_heat, where X_heat(i) defines the ininitesimal surface that is being heated
 X_temp = SysParam.X_temp;  % depth at which temperature response is calculated (SCALAR); to consider depth sensitivity of TDTR, solve for various X_temp's through the optical skin depth and weight solutions according to the depth sensitivity (assuming linear problem)
@@ -211,15 +229,23 @@ end
 currFigN = 10;  % handle for the figure; can be incremented or kept constant -- see below.
 
 % define initial value(s) for fit
+% upd. 26.02.2024: also define the widths
+% (for <flagUseDeviationFromInitialParamGuess> == true)
+
 X0 = zeros(length(FITNLambda)+length(FITNC)+length(FITNh),1);
+widthsX0 = zeros(length(FITNLambda)+length(FITNC)+length(FITNh),1);
+
 for i = 1:length(FITNLambda)
-    X0(i) = Lambda(FITNLambda(i));   
+    X0(i) = Lambda(FITNLambda(i));
+    widthsX0(i) = rangeLambda(FITNLambda(i));
 end
 for i = 1:length(FITNC)
     X0(length(FITNLambda)+i) = C(FITNC(i));  
+    widthsX0(length(FITNLambda)+i) = rangeC(FITNC(i));
 end
 for i = 1:length(FITNh)
     X0(length(FITNLambda)+length(FITNC)+i) = h(FITNh(i));
+    widthsX0(length(FITNLambda)+length(FITNC)+i) = rangeh(FITNh(i));
 end
 
 
@@ -232,36 +258,80 @@ end
 % automatic fitting    
 if auto_on == 1      
     
-    if (flagTwoFiles == 0)  % << 20.11.2023 << % 23.02.2024 %
-        % Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
-        % [Z,~] = TDTR_Bidirectional_SUB_C(Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
-        Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
-        [Z,~] = TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
-    else    % flagTwoFiles == 1 or 2
-        
-        if (flagTwoFiles == 1)
-            % >>>>>     >>>>> %
-            % only change for the second call of "_SUB_C": f2_f (modulation
-            % frequency).
-            Xsol = fminsearch(@(X) (TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
-               + TDTR_Bidirectional_SUB_C(currFigN+1, X,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)) ,X0); 
+    if (flagUseDeviationFromInitialParamGuess == false)
+    % conventional fit, as before, no ranges for the parameters are
+    % specified
+
+        if (flagTwoFiles == 0)  % << 20.11.2023 << % 23.02.2024 %
+            % Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
+            % [Z,~] = TDTR_Bidirectional_SUB_C(Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
+            Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
+            [Z,~] = TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
+        else    % flagTwoFiles == 1 or 2
             
-            Z = (TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
-                + TDTR_Bidirectional_SUB_C(currFigN+1, Xsol,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf));
-            % <<<<<  flagTwoFiles == 1: take the sum of the residuals  <<<<< %
+            if (flagTwoFiles == 1)
+                % >>>>>     >>>>> %
+                % only change for the second call of "_SUB_C": f2_f (modulation
+                % frequency).
+                Xsol = fminsearch(@(X) (TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+                   + TDTR_Bidirectional_SUB_C(currFigN+1, X,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf)) ,X0); 
+                
+                Z = (TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+                    + TDTR_Bidirectional_SUB_C(currFigN+1, Xsol,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf));
+                % <<<<<  flagTwoFiles == 1: take the sum of the residuals  <<<<< %
+            end
+            if (flagTwoFiles == 2)     % take the ratio of ratios % NOT CHECKED! %
+                Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, subD_c1empyric,subD_c2empyric, currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ,X0); 
+                Z = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, subD_c1empyric,subD_c2empyric, currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf); 
+            end
+    
+    
         end
-        if (flagTwoFiles == 2)     % take the ratio of ratios % NOT CHECKED! %
-            Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ,X0); 
-            Z = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf); 
+    
+        fprintf('Data fit (without the deviations from X0) completed\n')
+    
+    else % flagUseDeviationFromInitialParamGuess == true %
+
+        
+        if (flagTwoFiles == 0)  % << 20.11.2023 << % 23.02.2024 %
+            % Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
+            % [Z,~] = TDTR_Bidirectional_SUB_C(Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
+            
+            % upd. 26.02.2024: >>> adding the displacement... <<< %
+            % Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf),X0); 
+            Xsol = fminsearch(@(X) (TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+                + sqrt(sum(  ((X - X0).^2) ./ (widthsX0.^2) ))     ),X0); 
+            [Z,~] = TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf);
+        else    % flagTwoFiles == 1 or 2
+            
+            if (flagTwoFiles == 1)
+                % >>>>>     >>>>> %
+                % only change for the second call of "_SUB_C": f2_f (modulation
+                % frequency).
+                Xsol = fminsearch(@(X) (TDTR_Bidirectional_SUB_C(currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+                   + TDTR_Bidirectional_SUB_C(currFigN+1, X,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+                   + sqrt(sum(  ((X - X0).^2) ./ (widthsX0.^2) ))     ) ,X0); 
+                
+                Z = (TDTR_Bidirectional_SUB_C(currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+                    + TDTR_Bidirectional_SUB_C(currFigN+1, Xsol,f2_Ratio_data,f2_tdelay_data,tau_rep,f2_f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf));
+                % <<<<<  flagTwoFiles == 1: take the sum of the residuals  <<<<< %
+            end
+            if (flagTwoFiles == 2)     % take the ratio of ratios % NOT CHECKED! %
+                Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, subD_c1empyric,subD_c2empyric, currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+                    + sqrt(sum(  ((X - X0).^2) ./ (widthsX0.^2) )),X0); 
+                Z = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, subD_c1empyric,subD_c2empyric, currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf); 
+            end
+    
+    
         end
+    
+        fprintf('Data fit (with the deviations from X0) completed\n')
+    
+    end % "auto == true" %
+else % "auto == false" %    
 
-
-    end
-
-    fprintf('Data fit completed\n')
-else    
-
-% manual fitting        
+% manual fitting % upd. 26.02.2024: works only with flagTwoFiles == 0 or 1.
+% for flagTwoFiles == 2 have not checked.
     globAnsw = 1;
 
     while globAnsw == 1
