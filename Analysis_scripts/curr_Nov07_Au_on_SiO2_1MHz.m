@@ -13,54 +13,23 @@ SysParam.filename = 'Z:\ForMATLAB\data\RefAuGlass1MHz@1MHz_011123_210559_FIN.mat
 SysParam.Labels = ["Au", "Ti", "SiO2 (substr.)"]; % Labels for each element in the lists below. Only used in SIM plots
 
 %% Initial guess for the parameters (table values):
-% From the 2 MHz datas -- initial guess:
-SysParam.Lambda  = [315 0.258 1.3];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [51.3 5 1e6]*1e-9;  % Thicknesses (m)
-
-%% Fit results:
-% fit results (h_Au, lambda_Ti) -- before SENS analysis, same parameters as for 2 MHz:
-SysParam.Lambda  = [315 0.4151 1.3];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [54.34 5 1e6]*1e-9;  % Thicknesses (m)
+% SysParam.Lambda  = [315 16.8 1.3];  % Thermal conductivities (W m^-1 K^-1)
+% SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+% SysParam.h       = [50 5 1e6]*1e-9;  % Thicknesses (m)  
 
 
-% Trying to change h_Ti to 1nm, as in the case of Al transducer:
-SysParam.Lambda  = [315 0.10 1.3];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [54.34 1 1e6]*1e-9;  % Thicknesses (m)
-
-% Fit results (h_Au, lambda_Ti):
-SysParam.Lambda  = [315 0.1114 1.3];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [55.93 1 1e6]*1e-9;  % Thicknesses (m)
-
-
-% New try: 17.11.2023
-SysParam.Lambda  = [315 0.11135 1.3];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [55.93 1 1e6]*1e-9;  % Thicknesses (m)
-
-
-% New try: 20.11.2023 % see the *.docx-file. >>> %
-SysParam.Lambda  = [315 0.1086 1.3];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [54.60 1 1e6]*1e-9;  % Thicknesses (m)
-% <<< %
-
-
-% 21.11.2023: >>> %
+%% Parameter values:
 SysParam.Lambda  = [315 0.08 1.24];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [55.0 1 1e6]*1e-9;  % Thicknesses (m)
+SysParam.C       = [2.49 2.64 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.h       = [50.0 5 1e6]*1e-9;  % Thicknesses (m)
+
+
+% temp: >>> %
+SysParam.Lambda  = [315 0.08 1.24];  % Thermal conductivities (W m^-1 K^-1)
+SysParam.C       = [2.49 2.64 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
+SysParam.h       = [50.0 5 1e6]*1e-9;  % Thicknesses (m)
 % <<< %
 
-
-% temp, for sweeping the parameters:
-SysParam.Lambda  = [315 0.23 1.30];  % Thermal conductivities (W m^-1 K^-1)
-SysParam.C       = [2.49 2.63 1.86]*1e6;  % Volumetric heat capacities (J m^-3 K^-1)
-SysParam.h       = [54.0 1 1e6]*1e-9;  % Thicknesses (m)
-% <<<< %
 
 
 %% other parameters
@@ -83,20 +52,24 @@ SysParam.r_probe  = 0.5*20.3e-6;  % Probe 1/e^2 radius, (m)
 SysParam.tau_rep  = 1/(75.8e6);   % Laser repetition period (s) 
 SysParam.P_pump   = 0.8*21.0e-3; % 0.99*0.3*37e-3;   % absorbed pump power (transmission of objective * absorbance * pump power) 
 SysParam.P_probe  = 0.4*50.0e-3; % 0.8*0.3*17.5e-3;   % absorbed probe power (transmission of objective * absorbance * probe power); assumes AF chopper is OFF!  If not, then you need to multiply the probe power by 2.
-SysParam.tdelay_model = logspace(log10(10e-12),log10(4e-9),60)'; % time delays for model curve (s)
+%% 23.02.2024: >>>
+%SysParam.tdelay_model = logspace(log10(10e-12),log10(4e-9),60)'; % time delays for model curve (s)
 % VKORN :: changed to 60 from 30 in logspace().
+SysParam.tdelay_model = logspace(log10(50e-12),log10(4e-9),30)'; % time delays for model curve (s)
+%% <<<<<
 
 %% FIT SPECIFICATIONS
 % Choose layer indices; respective parameters are then adjusted in the fit;
-SysParam.FITNLambda = [1 2 3]; % [2 3 4]
-SysParam.FITNC = [1 2 3]; 
-SysParam.FITNh = [1 2];
-
-SysParam.FITNLambda = [2];
-SysParam.FITNC = []; 
+SysParam.FITNLambda = [1 2 3];
+SysParam.FITNC = [1 3]; 
 SysParam.FITNh = [1];
+
+% SysParam.FITNLambda = [1 2];
+% SysParam.FITNC = []; 
+% SysParam.FITNh = [];
+
 
 % Choose range of time delays to fit (s)
 % SysParam.tdelay_min = 75e-12; % before Apr19: 30e-12; 
-SysParam.tdelay_min = 350e-12; % <<< upd. 24.11.2023 <<< ; 
+SysParam.tdelay_min = 200e-12; % <<< upd. 24.11.2023 <<< ; 
 SysParam.tdelay_max = 5000e-12;

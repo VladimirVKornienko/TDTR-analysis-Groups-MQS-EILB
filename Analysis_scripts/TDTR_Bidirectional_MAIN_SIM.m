@@ -8,7 +8,7 @@ clear all
 %-------------------------------BEGIN CODE---------------------------------
 
 %% USER INPUT
-    [SysParam] = curr_Nov07_Au_on_SiO2_5MHz(); %Parameter_Example(); %load parameters (matlab function, parameters are assigned in next section below)
+    [SysParam] = curr_Nov07_Au_on_SiO2_2MHz(); %Parameter_Example(); %load parameters (matlab function, parameters are assigned in next section below)
      % load_Data = 0; if load_Data, load('struct_test_data.mat'), tnorm = 200; end   %load data (.mat), choose time value for normalization of Vin (ps)
      load_Data = 1; if load_Data, load(SysParam.filename), tnorm = 200; end   %load data (.mat), choose time value for normalization of Vin (ps)
   save_results = 0; if save_results, savefile = 'AN160219c_TDTR_Bidirectional_SENS'; end   % filename for saving parameters and results
