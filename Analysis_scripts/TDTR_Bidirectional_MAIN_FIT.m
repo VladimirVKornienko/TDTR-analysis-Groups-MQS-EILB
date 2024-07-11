@@ -23,7 +23,7 @@ clear all
 % upd. 23.02.2024:
 %
 
-    flagTwoFiles = 1;
+    flagTwoFiles = 2;
     % 0: use only one file for fitting;
     % 1: use two files for fitting, additive error
     % 2: use two files for fitting, compute the ratio (new - Feb. 23)
@@ -301,8 +301,8 @@ if auto_on == 1
                 % <<<<<  flagTwoFiles == 1: take the sum of the residuals  <<<<< %
             end
             if (flagTwoFiles == 2)     % take the ratio of ratios % NOT CHECKED! %
-                Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, subD_c1empyric,subD_c2empyric, currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ,X0,fitOptions); 
-                Z = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, subD_c1empyric,subD_c2empyric, currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,f2_h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf); 
+                Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, f2_h, subD_c1empyric,subD_c2empyric, currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ,X0,fitOptions); 
+                Z = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, f2_h, subD_c1empyric,subD_c2empyric, currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,f2_h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf); 
             end
     
     
@@ -337,9 +337,9 @@ if auto_on == 1
                 % <<<<<  flagTwoFiles == 1: take the sum of the residuals  <<<<< %
             end
             if (flagTwoFiles == 2)     % take the ratio of ratios % NOT CHECKED! %
-                Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, subD_c1empyric,subD_c2empyric, currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
+                Xsol = fminsearch(@(X) TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, f2_h, subD_c1empyric,subD_c2empyric, currFigN, X,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf) ...
                     + sqrt(sum(  (((X - X0).^2) ./ (X0.^2)) ./ (widthsX0.^2) )),X0,fitOptions); 
-                Z = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, subD_c1empyric,subD_c2empyric, currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,f2_h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf); 
+                Z = TDTR_Bidirectional_SUB_VKorn_D(f2_Ratio_data,f2_tdelay_data,f2_f, f2_h, subD_c1empyric,subD_c2empyric, currFigN, Xsol,Ratio_data,tdelay_data,tau_rep,f,Lambda,C,f2_h,eta,r_pump_data,r_probe,P_pump,nnodes,FITNLambda,FITNC,FITNh,X_heat,X_temp,AbsProf); 
             end
     
     
